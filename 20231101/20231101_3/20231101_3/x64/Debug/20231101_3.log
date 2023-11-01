@@ -1,0 +1,3 @@
+﻿  main.cpp
+D:\202315023_HongKyeongSeo\20231101\20231101_3\20231101_3\main.cpp(13,5): error C2084: 'int main(void)' 함수에 이미 본문이 있습니다.
+D:\202315023_HongKyeongSeo\20231101\20231101_3\20231101_3\main.cpp(4,5): message : 'main'의 이전 정의를 참조하십시오.
