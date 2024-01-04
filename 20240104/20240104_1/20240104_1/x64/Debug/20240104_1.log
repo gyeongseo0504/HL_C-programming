@@ -1,3 +1,2 @@
 ﻿  main.cpp
-C:\Users\user\Desktop\202315023 홍경서\20240104\20240104_1\20240104_1\main.cpp(17,15): warning C4244: '인수': 'time_t'에서 'unsigned int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  20240104_1.vcxproj -> C:\Users\user\Desktop\202315023 홍경서\20240104\20240104_1\x64\Debug\20240104_1.exe
+C:\미래모빌리티공학과\모빌리티 프로그래밍\새 폴더\20240104_1\20240104_1\main.cpp(3,10): fatal  error C1083: 포함 파일을 열 수 없습니다. 'pthread.h': No such file or directory

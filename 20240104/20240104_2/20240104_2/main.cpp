@@ -1,54 +1,44 @@
-#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
-#include <math.h>
 #include <stdlib.h>
-#include <time.h>
+#include <pthread.h>
 
-#define MAX_SIZE 10
+#define ARRAY_SIZE 301
 
-int main(void)
-{
-    int evenArray[MAX_SIZE];
-    int oddArray[MAX_SIZE];
+int totalSum = 0;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-    int evenCount = 0;
-    int oddCount = 0;
+void* calculateSum(void* arg) {
+    int start = *(int*)arg;
+    int localSum = 0;
 
-    srand(time(NULL));
-
-    while (evenCount < MAX_SIZE && oddCount < MAX_SIZE)
-    {
-        int randomNumber = rand() % 101;
-
-        if (randomNumber % 2 == 0)
-        {
-            evenArray[evenCount] = randomNumber;
-            evenCount++;
-        }
-        else
-        {
-            oddArray[oddCount] = randomNumber;
-            oddCount++;
-        }
+    for (int i = start; i < ARRAY_SIZE; i += 1) {
+        localSum += i;
     }
 
+    pthread_mutex_lock(&mutex);
+    totalSum += localSum;
+    pthread_mutex_unlock(&mutex);
 
-    printf("짝수 배열의 데이터     : ");
-    for (int i = 0; i < evenCount; i++)
-    {
-        printf(" %d ", evenArray[i]);
+    pthread_exit(NULL);
+}
+
+int main() {
+    pthread_t thread;
+    int startValue = 0;
+
+    if (pthread_create(&thread, NULL, calculateSum, (void*)&startValue) != 0) {
+        fprintf(stderr, "pthread create error\n");
+        exit(1);
     }
-    printf("\n");
-    printf("짝수 배열의 데이터 개수: %d\n", evenCount);
-    printf("홀수 배열의 데이터     : ");
-    for (int i = 0; i < oddCount; i++)
-    {
-        printf(" %d ", oddArray[i]);
+
+    if (pthread_join(thread, NULL) != 0) {
+        fprintf(stderr, "pthread join error\n");
+        exit(1);
     }
-    printf("\n");
-    printf("홀수 배열의 데이터 개수: %d\n", oddCount);
+
+    printf("Total Sum: %d\n", totalSum);
+
+    pthread_mutex_destroy(&mutex);
 
     return 0;
 }
-
-

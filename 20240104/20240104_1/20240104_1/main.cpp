@@ -1,31 +1,60 @@
-#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
-#include <math.h>
 #include <stdlib.h>
-#include <time.h>
+#include <pthread.h>
 
-#define rows 20
-#define cols 5
+#define NUM_THREADS 3
+#define ARRAY_SIZE 100
 
-int main(void)
-{
-    int a[rows][cols];
+int sum1 = 0, sum2 = 0, sum3 = 0;
 
-    srand(time(NULL));
-    for (int i = 0; i < rows; i++)
-    {
-        for (int j = 0; j < cols; j++)
-        {
-            a[i][j] = 1 + rand() % 100;
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
+void* calculateSum(void* arg) {
+    int* start = (int*)arg;
+    int localSum = 0;
+
+    for (int i = 0; i < ARRAY_SIZE; i++) {
+        localSum += *start + i;
+    }
+
+    pthread_mutex_lock(&mutex);
+    if (*start == 1) {
+        sum1 = localSum;
+    }
+    else if (*start == 101) {
+        sum2 = localSum;
+    }
+    else if (*start == 201) {
+        sum3 = localSum;
+    }
+    pthread_mutex_unlock(&mutex);
+
+    pthread_exit(NULL);
+}
+
+int main() {
+    pthread_t threads[NUM_THREADS];
+
+    int startValues[NUM_THREADS] = { 1, 101, 201 };
+
+    for (int i = 0; i < NUM_THREADS; i++) {
+        if (pthread_create(&threads[i], NULL, calculateSum, (void*)&startValues[i]) != 0) {
+            fprintf(stderr, "pthread create error\n");
+            exit(1);
         }
     }
 
-    for (int j = 0; j < rows; j++)
-    {
-        float total = a[j][0] * 0.3 + a[j][1] * 0.4 + a[j][2] * 0.2 + a[j][3] * 0.1 - a[j][4];
-        printf("학생 #%i의 최종 성적 =%10.2f\n", j + 1, fmax(total, 0.0));
+    for (int i = 0; i < NUM_THREADS; i++) {
+        if (pthread_join(threads[i], NULL) != 0) {
+            fprintf(stderr, "pthread join error\n");
+            exit(1);
+        }
     }
+
+    int totalSum = sum1 + sum2 + sum3;
+    printf("Total Sum: %d\n", totalSum);
+
+    pthread_mutex_destroy(&mutex);
 
     return 0;
 }
-
