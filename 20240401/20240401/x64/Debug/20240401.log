@@ -1,0 +1,2 @@
+﻿  Car.cpp
+C:\Users\user\Desktop\20240401\20240401\Car.cpp(3,10): error C1083: 포함 파일을 열 수 없습니다. 'car.h': No such file or directory
